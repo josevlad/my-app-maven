@@ -43,7 +43,7 @@ public class UserView {
         System.out.println("Ingrese el nuevo email: ");
 //        String email = Keyboard.getInputString();
 //        data.put("email", email);
-        data.put("email", Keyboard.getInputString());
+        data.put("email", Keyboard.getInputEmail());
 
         return data;
     }

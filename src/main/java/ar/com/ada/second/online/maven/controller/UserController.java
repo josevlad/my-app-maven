@@ -1,5 +1,7 @@
 package ar.com.ada.second.online.maven.controller;
 
+import ar.com.ada.second.online.maven.model.dao.JpaUserDAO;
+import ar.com.ada.second.online.maven.model.dao.UserDAO;
 import ar.com.ada.second.online.maven.model.dto.UserDTO;
 import ar.com.ada.second.online.maven.view.MainView;
 import ar.com.ada.second.online.maven.view.UserView;
@@ -11,6 +13,7 @@ public class UserController {
     private static UserController userController;
     private UserView userView = UserView.getInstance();
     private MainView mainView = MainView.getInstance();
+    private JpaUserDAO jpaUserDAO = JpaUserDAO.getInstance();
 
     private UserController() {
     }
@@ -65,7 +68,12 @@ public class UserController {
         userDTO.setEmail(dataNewUser.get("email"));
         */
 
+        System.out.println("Before to save:");
         System.out.println(userDTO.toString());
-        // proxima clase: se procede a guardar en la base de datos.
+        UserDAO userDAO = UserDAO.toDao(userDTO);
+
+        jpaUserDAO.save(userDAO);
+        System.out.println("After to save:");
+        System.out.println(userDAO.toString());
     }
 }
