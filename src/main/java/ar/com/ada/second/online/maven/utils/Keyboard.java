@@ -1,5 +1,6 @@
 package ar.com.ada.second.online.maven.utils;
 
+import java.io.IOException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -19,12 +20,11 @@ public class Keyboard {
         return scanner;
     }
 
-    // pressEnterKeyToContinue
     public static void pressEnterKeyToContinue() {
         System.out.println("Presione la tecla Enter para continuar...");
         try {
             System.in.read();
-        } catch (Exception e) {
+        } catch (IOException e) {
         }
     }
 
@@ -33,7 +33,6 @@ public class Keyboard {
         System.out.println("ERROR :: tipo de dato invalido, intente de nuevo");
     }
 
-    // getInputString
     public static String getInputString() {
         Scanner keyboard = getInstance();
         boolean aux = true;
