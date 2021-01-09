@@ -4,4 +4,6 @@ public interface DAO<T> {
 
     void save(T t);
 
+    Integer getTotalRecords();
+
 }
