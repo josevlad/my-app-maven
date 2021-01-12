@@ -42,7 +42,7 @@ public class Keyboard {
             try {
                 System.out.println("? ");
                 txt = keyboard.nextLine().trim();
-                while (!txt.isEmpty() && !txt.matches("^[A-Za-záéíóúÁÉÍÓÚñÑ\\.\\s]+$")) {
+                while (!txt.isEmpty() && !txt.matches("^[0-9A-Za-záéíóúÁÉÍÓÚñÑ\\.\\s]+$")) {
                     invalidData();
                     txt = keyboard.nextLine().trim();
                 }

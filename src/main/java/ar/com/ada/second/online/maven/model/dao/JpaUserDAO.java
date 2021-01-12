@@ -39,8 +39,15 @@ public class JpaUserDAO extends JPA implements DAO<UserDAO> {
     public void save(UserDAO userDAO) {
         // Consumer<EntityManager> persisUser = entityManager -> entityManager.persist(userDAO);
         // executeInsideTransaction(persisUser);
-        executeInsideTransaction(entityManager -> entityManager.persist(userDAO));
+        if (userDAO.getId() == null)
+            executeInsideTransaction(entityManager -> entityManager.persist(userDAO));
+        else
+            executeInsideTransaction(entityManager -> entityManager.merge(userDAO));
     }
+
+//    public void update(UserDAO userDAO) {
+//        executeInsideTransaction(entityManager -> entityManager.merge(userDAO));
+//    }
 
     @Override
     public Integer getTotalRecords() {
@@ -49,6 +56,15 @@ public class JpaUserDAO extends JPA implements DAO<UserDAO> {
         Integer count = singleResult != null ? Integer.parseInt(singleResult.toString()) : 0;
         closeConnection();
         return count;
+    }
+
+    @Override
+    public Optional<UserDAO> findById(Integer id) {
+        openConnection();
+        UserDAO userDAO = entityManager.find(UserDAO.class, id);
+        closeConnection();
+
+        return Optional.ofNullable(userDAO);
     }
 
     public List<UserDAO> findAll(Integer from, Integer limit) {
