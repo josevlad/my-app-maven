@@ -43,6 +43,9 @@ public class UserController {
                 case 3:
                     editUser();
                     break;
+                case 4:
+                    deleteUser();
+                    break;
                 case 5:
                     shouldItStay = false;
                     mainView.showTitleReturnMenu();
@@ -120,6 +123,25 @@ public class UserController {
         }
     }
 
+    private void deleteUser() {
+        UserDAO userToDelete = getUserToEditOrDelete(Paginator.DELETE);
+        if (userToDelete != null) {
+            Boolean answer = userView.areYouSureToRemoveIt(userToDelete);
+            if (answer) {
+                Boolean hasDeleted = jpaUserDAO.delete(userToDelete);
+                if (hasDeleted) {
+                    userView.userHasBeenSuccessfullyRemoved();
+                } else {
+                    userView.errorWhenDeletingUser();
+                }
+            } else {
+                userView.editOrDeleteUserCanceled(Paginator.DELETE);
+            }
+        } else {
+            userView.editOrDeleteUserCanceled(Paginator.DELETE);
+        }
+    }
+
     private UserDAO getUserToEditOrDelete(String optionEditOrDelete) {
         boolean shouldGetOut = false;
         Optional<UserDAO> userToEdithOptional = Optional.empty();
@@ -182,23 +204,20 @@ public class UserController {
                     case "U":
                         currentPage = totalPages - 1;
                         break;
-                    case "e":
-                    case "E":
-                        if (optionSelectEditOrDelete != null) {
-                            usersIdSelected = userView.userIdSelection(optionSelectEditOrDelete);
-                            shouldGetOut = true;
-                        }
-                        break;
                     case "q":
                     case "Q":
                         shouldGetOut = true;
                         break;
                     default:
-                        if (choice.matches("^-?\\d+$")) {
-                            int page = Integer.parseInt(choice);
-                            if (page > 0 && page <= totalPages) currentPage = page - 1;
-                        } else Keyboard.invalidData();
-
+                        if (optionSelectEditOrDelete != null) {
+                            usersIdSelected = Integer.parseInt(choice);
+                            shouldGetOut = true;
+                        } else {
+                            if (choice.matches("^-?\\d+$")) {
+                                int page = Integer.parseInt(choice);
+                                if (page > 0 && page <= totalPages) currentPage = page - 1;
+                            } else Keyboard.invalidData();
+                        }
                 }
             } else {
                 shouldGetOut = true;

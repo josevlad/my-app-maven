@@ -31,6 +31,7 @@ public class UserView {
         System.out.println("| 1 | Crear un usuario");
         System.out.println("| 2 | Lista de usuarios");
         System.out.println("| 3 | Editar usuario");
+        System.out.println("| 4 | Eliminar usuario");
         System.out.println("| 5 | Regresar el menu principal");
         return Keyboard.getInputInteger();
     }
@@ -87,8 +88,8 @@ public class UserView {
         });
         st.print();
 
-        if (optionSelectEdithOrDelete != null && !optionSelectEdithOrDelete.isEmpty())
-            paginator.set(paginator.size() - 2, optionSelectEdithOrDelete);
+//        if (optionSelectEdithOrDelete != null && !optionSelectEdithOrDelete.isEmpty())
+//            paginator.set(paginator.size() - 2, optionSelectEdithOrDelete);
 
         System.out.println("\n+----------------------------------------+");
         paginator.forEach(page -> System.out.print(page + " "));
@@ -146,6 +147,31 @@ public class UserView {
         System.out.printf("\nemail: %s", dto.getEmail());
         System.out.printf("\nNickname: %s\n", dto.getNickname());
 
+        Keyboard.pressEnterKeyToContinue();
+    }
+
+    public Boolean areYouSureToRemoveIt(UserDAO dao) {
+        System.out.println("\n¿Seguro que desea eleminar el siguiente registro?");
+        System.out.printf("id: %d", dao.getId());
+        System.out.printf("\nEmail: %s", dao.getEmail());
+        System.out.printf("\nNickname: %s\n", dao.getNickname());
+
+        System.out.println("| 1 | Si\n| 2 | No");
+
+        return Keyboard.getInputInteger() == 1;
+    }
+
+    public void userHasBeenSuccessfullyRemoved() {
+        System.out.println("Se ha eliminado el registro exitosamente!");
+    }
+
+    public void errorWhenDeletingUser() {
+        System.out.println("Oops!! hubo un error al eliminar el registro, intentelo de nuevo.");
+    }
+
+    public void editOrDeleteUserCanceled(String action) {
+        action = Paginator.EDIT.equals(action) ? "edicion" : "eliminacion";
+        System.out.println("Ha cancelado la " + action + " de usuario\n");
         Keyboard.pressEnterKeyToContinue();
     }
 }

@@ -36,13 +36,13 @@ public class JpaUserDAO extends JPA implements DAO<UserDAO> {
     }
 
     @Override
-    public void save(UserDAO userDAO) {
-        // Consumer<EntityManager> persisUser = entityManager -> entityManager.persist(userDAO);
+    public void save(UserDAO dao) {
+        // Consumer<EntityManager> persisUser = entityManager -> entityManager.persist(dao);
         // executeInsideTransaction(persisUser);
-        if (userDAO.getId() == null)
-            executeInsideTransaction(entityManager -> entityManager.persist(userDAO));
+        if (dao.getId() == null)
+            executeInsideTransaction(entityManager -> entityManager.persist(dao));
         else
-            executeInsideTransaction(entityManager -> entityManager.merge(userDAO));
+            executeInsideTransaction(entityManager -> entityManager.merge(dao));
     }
 
 //    public void update(UserDAO userDAO) {
@@ -65,6 +65,20 @@ public class JpaUserDAO extends JPA implements DAO<UserDAO> {
         closeConnection();
 
         return Optional.ofNullable(userDAO);
+    }
+
+    @Override
+    public Boolean delete(UserDAO dao) {
+        openConnection();
+        // sincronizacion
+        UserDAO userToDelete = entityManager.merge(dao);
+        // borrado
+        executeInsideTransaction(entityManager -> entityManager.remove(userToDelete));
+        closeConnection();
+
+        Optional<UserDAO> verifybyId = findById(dao.getId());
+
+        return !verifybyId.isPresent();
     }
 
     public List<UserDAO> findAll(Integer from, Integer limit) {
