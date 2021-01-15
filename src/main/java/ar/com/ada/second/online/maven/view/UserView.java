@@ -15,7 +15,7 @@ public class UserView {
     private UserView() {
     }
 
-    public static UserView  getInstance() {
+    public static UserView getInstance() {
         if (userView == null) userView = new UserView();
         return userView;
     }
