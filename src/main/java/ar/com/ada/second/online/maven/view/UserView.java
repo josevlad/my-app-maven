@@ -95,7 +95,6 @@ public class UserView {
         paginator.forEach(page -> System.out.print(page + " "));
         System.out.println("\n+----------------------------------------+");
 
-
         return Keyboard.getInputString();
     }
 

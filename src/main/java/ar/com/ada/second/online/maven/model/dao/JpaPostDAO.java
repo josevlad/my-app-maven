@@ -15,8 +15,11 @@ public class JpaPostDAO extends JPA implements DAO<PostDAO> {
     }
 
     @Override
-    public void save(PostDAO postDAO) {
-
+    public void save(PostDAO dao) {
+        if (dao.getId() == null)
+            executeInsideTransaction(entityManager -> entityManager.persist(dao));
+        else
+            executeInsideTransaction(entityManager -> entityManager.merge(dao));
     }
 
     @Override

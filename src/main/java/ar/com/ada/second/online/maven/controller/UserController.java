@@ -90,7 +90,7 @@ public class UserController {
             return;
         }
 
-        UserDAO userDAO = UserDAO.toDao(userDTO);
+        UserDAO userDAO = UserDAO.toDAO(userDTO);
 
         jpaUserDAO.save(userDAO);
 

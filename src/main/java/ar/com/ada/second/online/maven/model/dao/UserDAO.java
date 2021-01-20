@@ -35,7 +35,7 @@ public class UserDAO {
         this.email = email;
     }
 
-    public static UserDAO toDao(UserDTO dto) {
+    public static UserDAO toDAO(UserDTO dto) {
         UserDAO userDAO = new UserDAO(dto.getNickname(), dto.getEmail());
         if (dto.getId() != null)
             userDAO.setId(dto.getId());

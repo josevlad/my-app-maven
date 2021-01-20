@@ -35,6 +35,22 @@ public class JpaUserDAO extends JPA implements DAO<UserDAO> {
         }
     }
 
+    public UserDAO findByNickname(String nickname) {
+        openConnection();
+
+        TypedQuery<UserDAO> query = entityManager.createQuery(
+                "SELECT u FROM UserDAO AS u WHERE nickname=:nickname",
+                UserDAO.class
+        );
+        query.setParameter("nickname", nickname);
+
+        Optional<UserDAO> byNickname = query.getResultList().stream().findFirst();
+
+        closeConnection();
+
+        return byNickname.orElse(null);
+    }
+
     @Override
     public void save(UserDAO dao) {
         // Consumer<EntityManager> persisUser = entityManager -> entityManager.persist(dao);

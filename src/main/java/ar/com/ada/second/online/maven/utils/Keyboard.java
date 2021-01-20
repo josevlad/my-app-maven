@@ -33,7 +33,7 @@ public class Keyboard {
         System.out.println("ERROR :: tipo de dato invalido, intente de nuevo");
     }
 
-    public static String getInputString() {
+    public static String getInputAlphanumeric() {
         Scanner keyboard = getInstance();
         boolean aux = true;
         String txt = null;
@@ -43,6 +43,29 @@ public class Keyboard {
                 System.out.println("? ");
                 txt = keyboard.nextLine().trim();
                 while (!txt.isEmpty() && !txt.matches("^[0-9A-Za-záéíóúÁÉÍÓÚñÑ\\.\\s]+$")) {
+                    invalidData();
+                    txt = keyboard.nextLine().trim();
+                }
+                aux = false;
+            } catch (InputMismatchException e) {
+                invalidData();
+                keyboard.next();
+            }
+        }
+
+        return txt;
+    }
+
+    public static String getInputString() {
+        Scanner keyboard = getInstance();
+        boolean aux = true;
+        String txt = null;
+
+        while (aux) {
+            try {
+                System.out.println("? ");
+                txt = keyboard.nextLine().trim();
+                while (!txt.isEmpty() && !txt.matches("^[A-Za-záéíóúÁÉÍÓÚñÑ\\.\\s]+$")) {
                     invalidData();
                     txt = keyboard.nextLine().trim();
                 }
