@@ -20,9 +20,34 @@ public class Paginator {
         pages.add(OPTION_FIRTS);
         pages.add(OPTION_NEXT);
 
-        for (int i = 1; i <= totalPages; i++) {
-            pages.add("[" + i + "]");
+        if (totalPages > 10) {
+            int from = 1;
+            int limit = from + 4;
+
+            if (currentPage > 3) {
+                pages.add("[" + 1 + "]");
+                pages.add("[...]");
+
+                from = currentPage - 1;
+                limit = ((totalPages - currentPage) >= 2) ? from + 4 : totalPages;
+            }
+
+            for (int i = from; i <= limit; i++) {
+                pages.add("[" + i + "]");
+            }
+
+            if ((totalPages - currentPage) > 3) {
+                pages.add("[...]");
+                pages.add("[" + totalPages + "]");
+            }
+        } else {
+
+            for (int i = 1; i <= totalPages; i++) {
+                pages.add("[" + i + "]");
+            }
+
         }
+
 
         pages.add(OPTION_PREVIOUS);
         pages.add(OPTION_LAST);

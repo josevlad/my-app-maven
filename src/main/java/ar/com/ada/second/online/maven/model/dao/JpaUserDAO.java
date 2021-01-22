@@ -97,6 +97,7 @@ public class JpaUserDAO extends JPA implements DAO<UserDAO> {
         return !verifybyId.isPresent();
     }
 
+    @Override
     public List<UserDAO> findAll(Integer from, Integer limit) {
         openConnection();
 

@@ -6,8 +6,12 @@ import ar.com.ada.second.online.maven.model.dao.PostDAO;
 import ar.com.ada.second.online.maven.model.dao.UserDAO;
 import ar.com.ada.second.online.maven.model.dto.PostDTO;
 import ar.com.ada.second.online.maven.model.dto.UserDTO;
+import ar.com.ada.second.online.maven.utils.Keyboard;
+import ar.com.ada.second.online.maven.utils.Paginator;
 import ar.com.ada.second.online.maven.view.MainView;
 import ar.com.ada.second.online.maven.view.PostView;
+
+import java.util.List;
 
 public class PostController {
 
@@ -36,7 +40,7 @@ public class PostController {
                     createPost();
                     break;
                 case 2:
-                    System.out.println("listar post");
+                    listAllPosts();
                     break;
                 case 3:
                     System.out.println("editar post");
@@ -55,6 +59,7 @@ public class PostController {
     }
 
     private void createPost() {
+        postView.showTitleNewPost();
         UserDTO authorUser = getAuthorUser();
 
         if (authorUser != null) {
@@ -81,6 +86,12 @@ public class PostController {
 
     }
 
+    private void listAllPosts() {
+        postView.showTitleListPost();
+        UserDTO authorUser = getAuthorUser();
+        printRecordsPerPage(false, true, authorUser);
+    }
+
     private UserDTO getAuthorUser() {
         String nickname = null;
         Boolean hasUserFound = null;
@@ -102,5 +113,73 @@ public class PostController {
         return nickname.equalsIgnoreCase("q") ?
                 null :
                 UserDAO.toDTO(byNickname);
+    }
+
+    private Integer printRecordsPerPage(Boolean hasEditOrDelete, Boolean isHeaderShown, UserDTO authorUser) {
+        int limit = 4,
+                currentPage = 0,
+                totalRecords,
+                totalPages,
+                idSelected = 0;
+
+        List<PostDAO> posts;
+        List<String> paginator;
+
+        Integer authorUserId = (authorUser != null)
+                ? authorUser.getId()
+                : null;
+
+        boolean shouldGetOut = false;
+
+        while (!shouldGetOut) {
+            totalRecords = jpaPostDAO.getTotalRecords(authorUserId);
+            totalPages = (int) Math.ceil((double) totalRecords / limit);
+            paginator = Paginator.buildPaginator(currentPage, totalPages);
+            posts = (authorUser == null)
+                    ? jpaPostDAO.findAll(currentPage * limit, limit)
+                    : jpaPostDAO.findAllByUser(currentPage * limit, limit, authorUser);
+
+            if (!posts.isEmpty()) {
+                String choice = postView.printPostsPerPage(posts, paginator, isHeaderShown);
+
+                switch (choice) {
+                    case "i":
+                    case "I":
+                        currentPage = 0;
+                        break;
+                    case "a":
+                    case "A":
+                        if (currentPage > 0) currentPage--;
+                        break;
+                    case "s":
+                    case "S":
+                        if (currentPage + 1 < totalPages) currentPage++;
+                        break;
+                    case "u":
+                    case "U":
+                        currentPage = totalPages - 1;
+                        break;
+                    case "q":
+                    case "Q":
+                        shouldGetOut = true;
+                        break;
+                    default:
+                        if (hasEditOrDelete) {
+                            idSelected = Integer.parseInt(choice);
+                            shouldGetOut = true;
+                        } else {
+                            if (choice.matches("^-?\\d+$")) {
+                                int page = Integer.parseInt(choice);
+                                if (page > 0 && page <= totalPages) currentPage = page - 1;
+                            } else Keyboard.invalidData();
+                        }
+                }
+            } else {
+                shouldGetOut = true;
+                postView.postsListNotFound();
+            }
+        }
+
+        return idSelected;
     }
 }
