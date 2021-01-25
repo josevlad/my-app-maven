@@ -1,6 +1,7 @@
 package ar.com.ada.second.online.maven.model.dao;
 
 import ar.com.ada.second.online.maven.model.dto.PostDTO;
+import ar.com.ada.second.online.maven.model.dto.UserDTO;
 import lombok.*;
 
 import javax.persistence.*;
@@ -38,5 +39,15 @@ public class PostDAO {
             postDAO.setId(postDAO.getId());
 
         return postDAO;
+    }
+
+    public static PostDTO toDTO(PostDAO dao) {
+        UserDTO userDTO = UserDAO.toDTO(dao.getUser());
+        PostDTO postDTO = new PostDTO(dao.getBody(), userDTO);
+
+        if (dao.getId() != null)
+            postDTO.setId(dao.getId());
+
+        return postDTO;
     }
 }

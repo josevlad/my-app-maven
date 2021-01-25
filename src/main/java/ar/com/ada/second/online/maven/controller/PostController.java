@@ -12,6 +12,7 @@ import ar.com.ada.second.online.maven.view.MainView;
 import ar.com.ada.second.online.maven.view.PostView;
 
 import java.util.List;
+import java.util.Optional;
 
 public class PostController {
 
@@ -43,7 +44,7 @@ public class PostController {
                     listAllPosts();
                     break;
                 case 3:
-                    System.out.println("editar post");
+                    editPost();
                     break;
                 case 4:
                     System.out.println("eliminar post");
@@ -90,6 +91,52 @@ public class PostController {
         postView.showTitleListPost();
         UserDTO authorUser = getAuthorUser();
         printRecordsPerPage(false, true, authorUser);
+    }
+
+    private void editPost() {
+        postView.showTitleEditOrDeletePost(Paginator.EDIT);
+        UserDTO authorUser = getAuthorUser();
+        PostDAO postToEdit = getPostToEditOrDelete(Paginator.EDIT, authorUser);
+
+        if (postToEdit != null) {
+            String newPostBody = postView.getDataEditPost(postToEdit);
+
+            if (!newPostBody.isEmpty())
+                postToEdit.setBody(newPostBody);
+
+            jpaPostDAO.save(postToEdit);
+
+            PostDTO postDTO = PostDAO.toDTO(postToEdit);
+
+            postView.showPost(postDTO);
+
+        } else {
+            postView.etitOrDeletehPostCanceled(Paginator.EDIT);
+        }
+    }
+
+    private PostDAO getPostToEditOrDelete(String optionEditOrDelete, UserDTO authorUser) {
+        boolean shouldGetOut = false;
+        Optional<PostDAO> postToEditOrDeleteOptional = Optional.empty();
+        String actionInfo = Paginator.EDIT.equals(optionEditOrDelete) ? "editar" : "eliminar";
+        postView.selectPostIdToEditOrDelete(actionInfo);
+
+        Integer postIdToEditOrDelete = printRecordsPerPage(true, false, authorUser);
+
+        if (postIdToEditOrDelete != 0) {
+            while (!shouldGetOut) {
+                postToEditOrDeleteOptional = jpaPostDAO.findByIdAndAuthor(postIdToEditOrDelete, authorUser);
+                if (!postToEditOrDeleteOptional.isPresent()) {
+                    postView.postNotExist(postIdToEditOrDelete, authorUser);
+                    postIdToEditOrDelete = postView.postIdSelection(actionInfo);
+                    shouldGetOut = (postIdToEditOrDelete == 0);
+                } else {
+                    shouldGetOut = true;
+                }
+            }
+        }
+
+        return postToEditOrDeleteOptional.isPresent() ? postToEditOrDeleteOptional.get() : null;
     }
 
     private UserDTO getAuthorUser() {

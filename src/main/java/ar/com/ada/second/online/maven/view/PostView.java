@@ -2,8 +2,10 @@ package ar.com.ada.second.online.maven.view;
 
 import ar.com.ada.second.online.maven.model.dao.PostDAO;
 import ar.com.ada.second.online.maven.model.dto.PostDTO;
+import ar.com.ada.second.online.maven.model.dto.UserDTO;
 import ar.com.ada.second.online.maven.utils.CommandLineTable;
 import ar.com.ada.second.online.maven.utils.Keyboard;
+import ar.com.ada.second.online.maven.utils.Paginator;
 
 import java.util.List;
 
@@ -28,7 +30,7 @@ public class PostView {
         System.out.println("Que desea realizar: ");
         System.out.println("| 1 | Crear un post");
         System.out.println("| 2 | Lista de post");
-        System.out.println("| 3 | Editar pont");
+        System.out.println("| 3 | Editar post");
         System.out.println("| 4 | Eliminar post");
         System.out.println("| 5 | Regresar el menu principal");
         return Keyboard.getInputInteger();
@@ -104,5 +106,53 @@ public class PostView {
         System.out.println("\n######################################");
         System.out.println("#   Ada Social Network: Nuevo Post   #");
         System.out.println("######################################\n");
+    }
+
+    public void showTitleEditOrDeletePost(String action) {
+        String title = (action.equals(Paginator.EDIT))
+                ? "Editar"
+                : "Eliminar";
+
+        System.out.println("\n######################################");
+        System.out.println("# Ada Social Network: " + title + " Posts #");
+        System.out.println("######################################\n");
+    }
+
+    public void selectPostIdToEditOrDelete(String action) {
+        System.out.println("Seleccione el id para " + action + " de la siguiente lista de posteos: ");
+        Keyboard.pressEnterKeyToContinue();
+    }
+
+    public void postNotExist(Integer id, UserDTO authorUser) {
+        String info = (authorUser != null)
+                ? "No existe un post con el id " + id + " para el usuario " + authorUser.getNickname()
+                : "No existe un post con el id " + id + " asociado";
+
+        System.out.println(info);
+    }
+
+    public Integer postIdSelection(String action) {
+        System.out.println("Ingrese el numero de ID del post para " + action + " ó 0 para cancelar: \n");
+        return Keyboard.getInputInteger();
+    }
+
+    public void etitOrDeletehPostCanceled(String action) {
+        action = Paginator.EDIT.equals(action) ? "edicion" : "eliminacion";
+        System.out.println("Ha cancelado la " + action + " del post\n");
+        Keyboard.pressEnterKeyToContinue();
+    }
+
+    public String getDataEditPost(PostDAO postToEdit) {
+        System.out.printf("Ingrese el nuevo contenido del post (%s): \n", postToEdit.getBody());
+        return Keyboard.getInputAlphanumeric();
+    }
+
+    public void showPost(PostDTO dto) {
+        System.out.println("\nDatos del Post:");
+        System.out.printf("id: %d", dto.getId());
+        System.out.printf("\nContenido: %s", dto.getBody());
+        System.out.printf("\nNickname: %s\n\n", dto.getUser().getNickname());
+
+        Keyboard.pressEnterKeyToContinue();
     }
 }
