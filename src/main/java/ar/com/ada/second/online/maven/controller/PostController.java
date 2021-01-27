@@ -47,7 +47,7 @@ public class PostController {
                     editPost();
                     break;
                 case 4:
-                    System.out.println("eliminar post");
+                    deletePost();
                     break;
                 case 5:
                     shouldItStay = false;
@@ -111,7 +111,30 @@ public class PostController {
             postView.showPost(postDTO);
 
         } else {
-            postView.etitOrDeletehPostCanceled(Paginator.EDIT);
+            postView.editOrDeletehPostCanceled(Paginator.EDIT);
+        }
+    }
+
+    private void deletePost() {
+        postView.showTitleEditOrDeletePost(Paginator.DELETE);
+        UserDTO authorUser = getAuthorUser();
+        PostDAO postToDelete = getPostToEditOrDelete(Paginator.DELETE, authorUser);
+
+        if (postToDelete != null) {
+            Boolean answer = postView.areYouSureToRemoveIt(postToDelete);
+            if (answer) {
+                Boolean hasDelete = jpaPostDAO.delete(postToDelete);
+
+                if (hasDelete)
+                    postView.postHasBeenSuccessfullyRemoved();
+                else
+                    postView.errorWhenDeletingRecord();
+
+            } else {
+                postView.editOrDeletehPostCanceled(Paginator.DELETE);
+            }
+        } else {
+            postView.editOrDeletehPostCanceled(Paginator.DELETE);
         }
     }
 

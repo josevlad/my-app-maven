@@ -136,7 +136,7 @@ public class PostView {
         return Keyboard.getInputInteger();
     }
 
-    public void etitOrDeletehPostCanceled(String action) {
+    public void editOrDeletehPostCanceled(String action) {
         action = Paginator.EDIT.equals(action) ? "edicion" : "eliminacion";
         System.out.println("Ha cancelado la " + action + " del post\n");
         Keyboard.pressEnterKeyToContinue();
@@ -154,5 +154,24 @@ public class PostView {
         System.out.printf("\nNickname: %s\n\n", dto.getUser().getNickname());
 
         Keyboard.pressEnterKeyToContinue();
+    }
+
+    public Boolean areYouSureToRemoveIt(PostDAO postToDelete) {
+        System.out.println("\n¿Seguro que desea eleminar el siguiente registro?");
+        System.out.printf("ID: %d", postToDelete.getId());
+        System.out.printf("\nContenido: %s", postToDelete.getBody());
+        System.out.printf("\nAutor: %s\n", postToDelete.getUser().getNickname());
+
+        System.out.println("| 1 | Si\n| 2 | No");
+
+        return Keyboard.getInputInteger() == 1;
+    }
+
+    public void postHasBeenSuccessfullyRemoved() {
+        System.out.println("Se ha eliminado el registro exitosamente!");
+    }
+
+    public void errorWhenDeletingRecord() {
+        System.out.println("Oops!! hubo un error al eliminar el registro, intentelo de nuevo.");
     }
 }

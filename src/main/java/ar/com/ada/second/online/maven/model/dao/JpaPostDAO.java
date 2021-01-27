@@ -49,12 +49,26 @@ public class JpaPostDAO extends JPA implements DAO<PostDAO> {
 
     @Override
     public Optional<PostDAO> findById(Integer id) {
-        return Optional.empty();
+        openConnection();
+        PostDAO postDAO = entityManager.find(PostDAO.class, id);
+        closeConnection();
+
+        return Optional.ofNullable(postDAO);
     }
 
     @Override
-    public Boolean delete(PostDAO postDAO) {
-        return null;
+    public Boolean delete(PostDAO dao) {
+        openConnection();
+        // sincronizacion
+        PostDAO postToDelete = entityManager.merge(dao);
+        // borrado
+        executeInsideTransaction(entityManager -> entityManager.remove(postToDelete));
+
+        closeConnection();
+
+        Optional<PostDAO> verifyById = findById(dao.getId());
+
+        return !verifyById.isPresent();
     }
 
     @Override
