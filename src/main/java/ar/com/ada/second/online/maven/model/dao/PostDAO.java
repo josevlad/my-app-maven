@@ -5,6 +5,8 @@ import ar.com.ada.second.online.maven.model.dto.UserDTO;
 import lombok.*;
 
 import javax.persistence.*;
+import java.io.Serializable;
+import java.util.List;
 
 @Getter
 @Setter
@@ -13,7 +15,7 @@ import javax.persistence.*;
 @ToString
 @Entity
 @Table(name = "Post")
-public class PostDAO {
+public class PostDAO implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -25,6 +27,9 @@ public class PostDAO {
     @ManyToOne
     @JoinColumn(name = "User_id", nullable = false, foreignKey = @ForeignKey(name = "fk_Post_User"))
     private UserDAO user;
+
+    @OneToMany(mappedBy = "post")
+    private List<CommentDAO> comments;
 
     public PostDAO(String body, UserDAO user) {
         this.body = body;
